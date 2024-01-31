@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Fetch latest changes
-      run: git fetch --all
+      run: git fetch origin --prune
 
     - name: Validate branch name
       run: |
@@ -27,11 +27,15 @@ jobs:
           exit 1
         fi
 
+    - name: Delete existing temporary branch (if exists)
+      run: |
+        git branch -D temp_branch || true
+
     - name: Create temporary orphan branch
       run: |
         selected_branch=${{ github.event.inputs.branch_to_delete }}
-        git checkout -b temporary_branch $selected_branch
-        git checkout --orphan temporary_branch
+        git checkout -b temp_branch $selected_branch
+        git checkout --orphan temp_branch
         git commit --allow-empty -m "Create temporary orphan branch based on $selected_branch"
 
     - name: Delete previous branch
