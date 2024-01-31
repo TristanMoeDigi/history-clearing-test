@@ -1,0 +1,44 @@
+name: Clear History
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch_to_delete:
+        description: 'Name of the branch to delete'
+        required: true
+
+jobs:
+  branch-actions:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Validate branch name
+      run: |
+        branch_to_delete=${{ github.event.inputs.branch_to_delete }}
+        branches=$(git ls-remote --heads origin | sed 's?.*refs/heads/??')
+        if ! echo "$branches" | grep -q "^$branch_to_delete$"; then
+          echo "Error: Branch '$branch_to_delete' does not exist."
+          exit 1
+        fi
+
+    - name: Create temporary orphan branch
+      run: |
+        selected_branch=${{ github.event.inputs.branch_to_delete }}
+        git checkout -b temp_branch $selected_branch
+        git checkout --orphan temp_branch
+        git commit --allow-empty -m "Create temporary orphan branch based on $selected_branch"
+
+    - name: Delete previous branch
+      run: |
+        git branch -D ${{ github.event.inputs.branch_to_delete }}
+
+    - name: Rename orphan branch
+      run: |
+        git branch -m ${{ github.event.inputs.branch_to_delete }}
+
+    - name: Push changes
+      run: |
+        git push origin ${{ github.event.inputs.branch_to_delete }} -f
