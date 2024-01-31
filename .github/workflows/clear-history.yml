@@ -15,14 +15,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Fetch latest changes
-      run: git fetch origin --prune
+    - name: Fetch all branches and tags
+      run: git fetch --prune --unshallow --tags
+
+    - name: List branches for debugging
+      run: git branch -a
 
     - name: Validate branch name
       run: |
         branch_to_delete=${{ github.event.inputs.branch_to_delete }}
-        branches=$(git ls-remote --heads origin | sed 's?.*refs/heads/??')
-        if ! echo "$branches" | grep -q "^$branch_to_delete$"; then
+        branches=$(git branch -a | grep -E "remotes/origin/$branch_to_delete$")
+        if [ -z "$branches" ]; then
           echo "Error: Branch '$branch_to_delete' does not exist."
           exit 1
         fi
