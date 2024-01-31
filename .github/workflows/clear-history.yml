@@ -15,6 +15,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Fetch latest changes
+      run: git fetch origin --prune
+
     - name: Validate branch name
       run: |
         branch_to_delete=${{ github.event.inputs.branch_to_delete }}
