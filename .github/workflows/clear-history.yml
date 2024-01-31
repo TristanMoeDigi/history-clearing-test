@@ -43,7 +43,8 @@ jobs:
 
     - name: Delete previous branch
       run: |
-        git branch -D ${{ github.event.inputs.branch_to_delete }}
+        selected_branch=${{ github.event.inputs.branch_to_delete }}
+        git branch -D origin/$selected_branch
 
     - name: Rename orphan branch
       run: |
