@@ -34,7 +34,7 @@ jobs:
     - name: Create temporary orphan branch
       run: |
         selected_branch=${{ github.event.inputs.branch_to_delete }}
-        git checkout --orphan -B temp_branch origin/$selected_branch
+        git checkout -B temp_branch origin/$selected_branch --orphan
         git commit --allow-empty -m "Create temporary orphan branch based on $selected_branch"
 
     - name: Delete previous branch
