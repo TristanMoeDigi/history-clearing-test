@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Fetch latest changes
-      run: git fetch origin --all
+      run: git fetch --all
 
     - name: Validate branch name
       run: |
