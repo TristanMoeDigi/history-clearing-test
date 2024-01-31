@@ -14,6 +14,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Fetch latest changes
       run: git fetch origin --prune
@@ -50,3 +52,5 @@ jobs:
     - name: Push changes
       run: |
         git push origin ${{ github.event.inputs.branch_to_delete }} -f
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
